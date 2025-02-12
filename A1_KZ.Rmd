@@ -1,0 +1,410 @@
+---
+title: "Assignment 1"
+subtitle: "Data set selection and initial Processing"
+author: "Keren Zhang"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 2
+bibliography: A1_references.bib
+csl: biomed-central.csl
+---
+
+## Introduction
+
+Lung adenocarcinoma, a major subtype of non-small cell lung cancer (NSCLC), is one of the most common and deadly forms of cancer worldwide. Despite advances in treatment, many patients diagnosed with early-stage lung adenocarcinoma still face a high risk of the cancer spreading, or metastasizing, to other parts of the body after surgical removal of the tumor. This spread significantly worsens their prognosis and treatment options. Understanding the mechanisms of metastasis and resistance to therapy in lung adenocarcinoma is crucial for developing more effective treatments.
+
+In the study by Liu et al. (2024), they particularly focused on lung adenocarcinoma (LUAD), which is a type of lung cancer known to spread to distant parts of the body in about half of the patients even after surgical removal of the tumor. To better understand and find ways to treat this spreading, or metastasis, they have developed a new experimental model using patient-derived organoids (PDOs). PDOs are three-dimensional cell cultures taken from patients' tumors that mimic the real biological environment of lung cancer. One specific aspect that they were examining is the response of lung cancer cells that have a common mutation (KRASG12C) to a new drug called Sotorasib, to see if it can prevent the cancer from spreading and understand how resistance to this drug develops.
+
+## Data Import
+
+#### Load Necessary Libraries:
+
+```{r}
+library(GEOquery)
+library(knitr)
+library(ggplot2)
+library(DESeq2)
+```
+
+```{r}
+
+data_set_geoid <- "GSE276387" 
+
+# Obtain Data from GEO
+gse <- getGEO(data_set_geoid ,GSEMatrix=FALSE)
+
+#Sumamry of Dataset
+gse@header$summary
+```
+
+### Additional information
+
+#### Information about Platforms:
+
+```{r}
+# Check the number of platforms found
+number_of_platforms <- length(names(GPLList(gse)))
+print(paste("Number of platforms available:", number_of_platforms))
+
+# Retrieve first platform IDs (GPL) associated with the GSE
+gpl_1 <- names(GPLList(gse))[[1]]
+
+print("First Platform:")
+#Retrieve detailed information about the platform used in the GEO series
+gpl_1_info <- Meta(getGEO(gpl_1))
+
+gpl_1_info$title
+
+gpl_1_info$last_update_date
+
+gpl_1_info$organism
+
+
+# Retrieve second platform IDs (GPL) associated with the GSE
+gpl_2 <- names(GPLList(gse))[[2]]
+
+print("Second Platform:")
+#Retrieve detailed information about the platform used in the GEO series
+gpl_2_info <- Meta(getGEO(gpl_2))
+
+gpl_2_info$title
+
+gpl_2_info$last_update_date
+
+gpl_2_info$organism
+```
+
+#### Information on Data Processing:
+
+```{r}
+gse@gsms[[1]]@header$data_processing[1]
+```
+
+#### Expression Data file info:
+
+There is one supplementary file available for this study and it contains the raw counts for the RNASeq dataset.
+
+```{r}
+#get the names of the supplementary files
+sfilenames = getGEOSuppFiles(data_set_geoid, fetch_files = FALSE)
+sfilenames$fname
+
+# No need to worry about which file to use as there is only one, but this is here for convenience in later analysis 
+data_filename <- sfilenames$fname[1]
+data_filename
+```
+
+## Data Assesment
+#### Get Expression Data
+
+```{r}
+#Download to current directory
+download_dir <- file.path(getwd())
+
+# Check to see if the file exists already before you download them
+# Only download files that we don't have from the set of supplementary files
+
+# Identify missing files based on their presence in the download directory
+missing_files <- sfilenames$fname[!unlist(
+  lapply(sfilenames$fname, function(x) {
+    file.exists(file.path(download_dir, data_set_geoid, x))
+  })
+)]
+
+# Download missing files
+if (length(missing_files) > 0) {
+  for (i in 1:length(missing_files)) {
+    # Get the supplementary files from GEO
+    sfiles <- getGEOSuppFiles(data_set_geoid,
+                              filter_regex = missing_files[i],
+                              baseDir = download_dir,
+                              fetch_files = TRUE)
+  }
+}
+
+```
+
+#### Read the Data
+
+```{r}
+# Read the data table from a specified file path within the download directory
+luad_rnaseq_data <- read.table(
+  file.path(download_dir, data_set_geoid, data_filename),  # Construct the full path to the file
+  header = TRUE,   # Specify that the first row of the file contains column headers
+  check.names = TRUE  # Ensure that column names are valid R names and adjust if necessary
+)
+
+# Display the dimensions of the luad_data data frame to understand its structure
+dim(luad_rnaseq_data)
+
+# Generate an HTML-formatted table using 'kable' from the 'knitr' package
+# Only look at the first 7 rows and columns
+kable(luad_rnaseq_data[1:7,1:7], format = "html")
+```
+
+#### Dataset Size
+
+```{r}
+nrow(luad_rnaseq_data)
+```
+
+This data contains 57445 rows genes which sounds like a good length for RNASeq data.
+
+####Analyzing Column Names
+
+```{r}
+colnames(luad_rnaseq_data)[1:28]
+```
+
+From the above I can (safely) assume:
+
+-   LUAD refers to the 4 Human Tumor samples
+-   PDO without MDO refers to the 17 Patient Derived Organoid samples
+-   PDO23_MDO refers to the 5 Metastasis Derived Organoid samples
+
+#### Collect Addition Annotation
+
+This provides information on the sample description / cell type, the tissue type, the cell line, and GSM. 
+```{r}
+# Extract all sample information from the GSE object
+list_of_samples <- gse@gsms
+
+# Create a data frame containing the title and characteristics of each sample
+samples_type <- do.call(rbind,
+    lapply(list_of_samples, function(x) {
+        c(x@header$title, x@header$characteristics_ch1)
+    })
+)
+
+head(samples_type, 3)
+
+```
+
+## Data Mapping
+
+Fortunately, for the ```luad_rnaseq_data```, it appears that the ```SYMBOL``` column is already mapped to gene symbols, which are often referred to as HUGO Gene Nomenclature Committee (HGNC) symbols. These symbols are standard identifiers for genes in human biology and are used to ensure consistency and accuracy.
+
+To verify the mapping already present in the dataset, I will double check the first three rows in the ```luad_rnaseq_data``` manually
+
+```{r}
+library(biomaRt)
+
+# Connect to the Ensembl database
+ensembl <- useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+
+# Get gene symbols using Ensembl IDs
+genes <- c("ENSG00000000003", "ENSG00000000005", "ENSG00000000419")  # Example Ensembl IDs
+gene_info <- getBM(attributes = c('ensembl_gene_id', 'hgnc_symbol'), 
+                   filters = 'ensembl_gene_id', 
+                   values = genes, 
+                   mart = ensembl)
+
+print(gene_info)
+
+```
+
+This matches what is in the dataset, so no further mapping is needed. 
+
+## Data Cleaning
+
+See if there are missing values for mapped symbols:
+```{r}
+# Check for empty strings or NA values in the SYMBOL column
+missing_symbols <- luad_rnaseq_data[luad_rnaseq_data$SYMBOL == "" | is.na(luad_rnaseq_data$SYMBOL), ]
+
+# Print the rows with missing SYMBOLs
+print(missing_symbols)
+
+# Count the number of genes with missing SYMBOLs
+num_missing_symbols <- nrow(missing_symbols)
+print(paste("Number of genes with missing SYMBOLs:", num_missing_symbols))
+```
+
+
+See if there are duplicate genes: 
+```{r}
+# Identify duplicate gene identifiers based on the ENSEMBL column
+dup_genes_luad <- luad_rnaseq_data[duplicated(luad_rnaseq_data$ENSEMBL) | duplicated(luad_rnaseq_data$ENSEMBL, fromLast = TRUE),]
+
+# Display the dimensions to understand the updated structure
+dim(luad_rnaseq_data)
+
+```
+So no duplicates. 
+
+
+For now, I want to focus on the 4 Human Tumor samples (LUAD) only. so I isolate them from the dataset:
+
+
+```{r}
+# Print column names to check their format and identify LUAD samples
+print(colnames(luad_rnaseq_data))
+
+# Select columns related to LUAD samples
+luad_samples_only <- luad_rnaseq_data[, grep("LUAD|ENSEMBL|SYMBOL", colnames(luad_rnaseq_data))]
+
+kable(luad_samples_only[1:7,1:6], format = "html")
+```
+
+Before proceeding to filter for outliers, it's beneficial to visualize the data using plots such as histograms or boxplots: 
+```{r}
+
+
+# Basic boxplot
+boxplot(luad_samples_only[,3:ncol(luad_samples_only)],
+        main = "Expression Levels in LUAD Samples",
+        ylab = "Expression",
+        xlab = "Samples",
+        las = 2, # Makes the sample names vertical
+        col = rainbow(ncol(luad_samples_only)-2)) # Adding some color
+
+```
+#### Outliers Removal
+Will use  the interquartile range (IQR) to identify and remove outliers.
+```{r}
+# Define a function to identify non-outlier indices
+filter_outliers <- function(data) {
+  Q1 <- quantile(data, 0.25)
+  Q3 <- quantile(data, 0.75)
+  IQR <- Q3 - Q1
+  lower_bound <- Q1 - 1.5 * IQR
+  upper_bound <- Q3 + 1.5 * IQR
+  return(which(data > lower_bound & data < upper_bound))
+}
+
+# Apply the function and find common indices across all samples
+indices_list <- lapply(luad_samples_only[,3:ncol(luad_samples_only)], filter_outliers)
+common_indices <- Reduce(intersect, indices_list)
+
+# Subset the data to only include rows with no outliers in any column
+cleaned_luad_samples_only <- luad_samples_only[common_indices, ]
+
+
+
+
+boxplot(cleaned_luad_samples_only[,3:ncol(cleaned_luad_samples_only)],
+        main = "Expression Levels in LUAD Samples (Cleaned)",
+        ylab = "Expression",
+        xlab = "Samples",
+        las = 2,  # Makes the sample names vertical
+        col = rainbow(ncol(cleaned_luad_samples_only)-2))  # Adding some color
+
+dim(cleaned_luad_samples_only)
+```
+
+Now we have a filtered set of data containing the 4 Human Tumor samples only and with outliers removed. 
+
+
+## Data Normalization
+
+#### Visualizing Distribution
+
+Boxplot:
+```{r}
+# Ensure data is numeric and add 1 to avoid log(0)
+data2plot <- log2(cleaned_luad_samples_only[,3:ncol(cleaned_luad_samples_only)] + 1)
+
+# Create a boxplot of the log-transformed data
+boxplot(data2plot, xlab = "Samples", ylab = "log2 Expression",
+        las = 2, cex = 0.5, cex.lab = 0.5,
+        cex.axis = 0.5, main = "Log-transformed RNASeq Samples",
+        col = rainbow(ncol(data2plot)))
+
+# Calculate the median of medians and add a reference line
+median_of_medians <- median(apply(data2plot, 2, median))
+abline(h = median_of_medians, col = "green", lwd = 0.6, lty = "dashed")
+
+```
+
+```{r}
+# 'cleaned_luad_samples_only' contains the samples from the third column onwards
+data_to_analyze <- cleaned_luad_samples_only[,3:ncol(cleaned_luad_samples_only)]
+data2plot <- log2(as.matrix(data_to_analyze) + 1)
+
+# Check for any Inf or -Inf values in the data and replace them
+data2plot[is.infinite(data2plot)] <- NA
+
+# Calculate the density for each column, ignoring NA values
+counts_density <- lapply(1:ncol(data2plot), function(i) {
+  density(na.omit(data2plot[,i]), na.rm = TRUE)
+})
+
+# Initialize xlim and ylim with realistic values
+xlim <- c(NA, NA)
+ylim <- c(NA, NA)
+
+# Update xlim and ylim based on densities
+for (i in 1:length(counts_density)) {
+  if (!is.null(counts_density[[i]])) {
+    xlim <- range(c(xlim, counts_density[[i]]$x), na.rm = TRUE)
+    ylim <- range(c(ylim, counts_density[[i]]$y), na.rm = TRUE)
+  }
+}
+
+# Check if xlim and ylim are still NA and set default values if necessary
+if (is.na(xlim[1])) xlim <- c(0, 1)  # Default range, adjust as necessary
+if (is.na(ylim[1])) ylim <- c(0, 0.1)
+
+# Colors and line types for each sample
+cols <- rainbow(ncol(data2plot))
+ltys <- rep(1, ncol(data2plot))
+
+# Initialize the plot with the first density plot if available
+if(length(counts_density) > 0 && !is.null(counts_density[[1]])) {
+  plot(counts_density[[1]], xlim = xlim, ylim = ylim, type = "n",
+       main = "Smoothing Density of Log2-Transformed Expression",
+       xlab = "Log2 Expression", ylab = "Density",
+       cex.lab = 0.85)
+
+  # Add each density plot line
+  for (i in 1:length(counts_density)) {
+    if (!is.null(counts_density[[i]])) {
+      lines(counts_density[[i]], col = cols[i], lty = ltys[i])
+    }
+  }
+
+  # Create a legend
+  legend("topright", legend = colnames(data2plot),
+         col = cols, lty = ltys, cex = 0.75,
+         border = "blue", text.col = "green4",
+         merge = TRUE, bg = "gray90")
+}
+
+
+```
+Create a DESeqDataSet:
+```{r}
+sampleData <- data.frame(
+  row.names = colnames(cleaned_luad_samples_only[, 3:6]),
+  condition = c("LUAD16T", "LUAD18T", "LUAD1T", "LUAD23T") # Adjust according to actual conditions
+)
+
+# Create a DESeqDataSet
+dds <- DESeqDataSetFromMatrix(
+  countData = cleaned_luad_samples_only[, 3:6],
+  colData = sampleData,
+  design = ~ condition
+)
+
+dds <- DESeq(dds)
+```
+
+## Interpret and Document
+
+**Why is the dataset of interest to you?** I choose this dataset because I had been working with LUAD relate projects inthe past and I want to continue the exploration
+
+**What are the control and test conditions of the dataset?** The control condition is the Metastasis derived organoid and the test condition are te human samples
+
+**How many samples in each of the conditions of your dataset?** There are 17 Patient Derived Organoid samples, 5 Metastasis Derived Organoid samples, and 4 Human Tumor Samples.
+
+**Were there expression values that were not unique for specific genes? How did you handle these?** All the mapped genes are unique
+
+**Were there expression values that could not be mapped to current HUGO symbols?** Yes, there were 19651 expression values that could not be mapped to current HUGO symbols.
+
+***Were there any outliers in your dataset? How were they handled in the originating paper? How many outliers were removed?*** The outliers in my dataset does not exist after mapping to HGNC symbols and all genes remaining have total count number summing across samples that are greater than or equal to 3, which is the number of samples in each conditions. In the original paper, the method in which they remove outliers is not stated.
+
+***How did you handle replicates?*** There are no technical replicates are all samples are the same run. However, there are utiple biological replicates in each conditions. 
+
+***What is the final coverage of your dataset?*** 

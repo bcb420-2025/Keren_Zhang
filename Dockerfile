@@ -6,3 +6,5 @@ RUN R -e "install.packages(c('DESeq2', 'pheatmap', 'enrichplot'), repos='http://
 # Intsalling BioManager may result in longer build time, thus is only included when needed
 # RUN R -e "if (!requireNamespace('BiocManager', quietly = TRUE)) install.packages('BiocManager'); \
 #          BiocManager::install(c('DESeq2', 'enrichplot'))"
+
+RUN R -e 'BiocManager::install("GEOquery")'
