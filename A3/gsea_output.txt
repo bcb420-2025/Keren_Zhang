@@ -1,0 +1,166 @@
+Using system JDK.
+[1743551443408] [INFO] Parameters passing to GSEAPreranked.main:
+[1743551443527] [INFO] rnk	/home/rstudio/projects/A3/Tumour_vs_PDO.rnk
+[1743551443528] [INFO] gmx	/home/rstudio/projects/A3/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_March_01_2025_symbol.gmt
+[1743551443530] [INFO] rnd_seed	12345
+[1743551443531] [INFO] rpt_label	Tumour_vs_PDO
+[1743551443531] [INFO] collapse	false
+[1743551443532] [INFO] zip_report	false
+[1743551443533] [INFO] gui	false
+[1743551443533] [INFO] out	/home/rstudio/projects/A3
+[1743551443535] [INFO] nperm	1000
+[1743551443536] [INFO] scoring_scheme	weighted
+[1743551443538] [INFO] plot_top_x	20
+[1743551443539] [INFO] rnd_seed	12345
+[1743551443540] [INFO] set_max	200
+[1743551443542] [INFO] set_min	15
+[1743551443629] [SEVERE] Could not make dir: /home/rstudio/projects/A3/ap[174[1743551443685] [INFO] Begun importing: RankedList from: /home/rstudio/projects/A3/Tumour_vs_PDO.to parse>/home/rstudio/projects/A3/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_March_01_2025_symbol.gmt< got: [/home/rstudio/projects/A3/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_March_01_2025_symbol.gmt]
+[1743551444973] [INFO] Begun importing: GeneSetMatrix from: /home/rstudio/projects/A3/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_March_01_2025_symbol.gmt
+[174[1743551446171] [INFO] Using file '/home/rstudio/projects/A3/Human_GOBP_AllPathways_noPFOCR_no_GO_iea_March_01_2025_symbol.gmt' with unknown vers[1743551446244] [INFO] No ranked list collapsing was done .. using original as is
+[1743551446276] [INFO] Got gsets: 19372 now preprocessing them ... min: 15 max: 200
+DoneDone removeGeneSetsSmallerThan: 15 for: 501 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 1001 / 7Done removeGeneSetsSmallerThan: 15 for: 1501 / 7191
+DoneDone removeGeneSetsSmallerThan: 15 for: 2001 / 7Done removeGeneSetsSmallerThan: 15 for: 2501 / 7191
+Done removeGeneSetsSmallerThan: 15 for: 3001 / 7191
+DoneDone removeGeneSetsSmallerThan: 15 for: 3501 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 4001 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 4501 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 5001 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 5501 / 7DoneDone removeGeneSetsSmallerThan: 15 for: 6001 / 7Done removeGeneSetsSmallerThan: 15 for: 6501 / 7191
+Done removeGeneSetsSmallerThan: 15 for: 7001 / 7191
+[1743551447714] [INFO] Done preproc for smaller than: 15
+Done removeGeneSetsLargerThan 501 / 6329
+Done removeGeneSetsLargerThan 1001 / 6329
+Done removeGeneSetsLargerThan 1501 / 6329
+Done removeGeneSetsLargerThan 2001 / 6329
+Done removeGeneSetsLargerThan 2501 / 6329
+Done removeGeneSetsLargerThan 3001 / 6329
+Done removeGeneSetsLargerThan 3501 / 6329
+Done removeGeneSetsLargerThan 4001 / 6329
+Done removeGeneSetsLargerThan 4501 / 6329
+Done removeGeneSetsLargerThan 5001 / 6329
+Done removeGeneSetsLargerThan 5501 / 6329
+Done removeGeneSetsLargerThan 6001 / 6329
+[1743551449186] [INFO] Done preproc for larger than: 200
+GeneSetCohorted: 501 / 5743
+GeneSetCohorted: 1001 / 5743
+GeneSetCohorted: 1501 / 5743
+GeneSetCohorted: 2001 / 5743
+GeneSetCohorted: 2501 / 5743
+GeneSetCohorted: 3001 / 5743
+GeneSetCohorted: 3501 / 5743
+GeneSetCohorted: 4001 / 5743
+GeneSetCohorted: 4501 / 5743
+GeneSetCohorted: 5001 / 5743
+GeneSetCohorted: 5501 / 5743
+GeneSetCohorted_scored: 501 / 5743
+GeneSetCohorted_scored: 1001 / 5743
+GeneSetCohorted_scored: 1501 / 5743
+GeneSetCohorted_scored: 2001 / 5743
+GeneSetCohorted_scored: 2501 / 5743
+GeneSetCohorted_scored: 3001 / 5743
+GeneSetCohorted_scored: 3501 / 5743
+GeneSetCohorted_scored: 4001 / 5743
+GeneSetCohorted_scored: 4501 / 5743
+GeneSetCohorted_scored: 5001 / 5743
+GeneSetCohorted_scored: 5501 / 5743
+shuffleGeneSet for GeneSet 1/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 6/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 11/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shufshuffleGeneSet for GeneSet 16/5743 nperm: 1GeneGeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 21/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 26/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+SetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 31/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 36/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 41/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+shuffleGeneSet for GeneSet 46/5743 nperm: 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
+GeneSetCohorted: 501 / 1000
+GeneSetCohorted_scored: 501 / 1000
