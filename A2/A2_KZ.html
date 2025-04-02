@@ -11,7 +11,7 @@
 
 <meta name="author" content="Keren Zhang" />
 
-<meta name="date" content="2025-03-14" />
+<meta name="date" content="2025-04-01" />
 
 <title>Assignment 2</title>
 
@@ -1506,7 +1506,7 @@ border-radius: 0px;
 <h3 class="subtitle">Differential Gene expression and Preliminary
 ORA</h3>
 <h4 class="author">Keren Zhang</h4>
-<h4 class="date">2025-03-14</h4>
+<h4 class="date">2025-04-01</h4>
 
 </div>
 
@@ -1599,8 +1599,8 @@ colnames(luad_matrix) &lt;- colnames(normalized_luad_data[, 2:ncol(normalized_lu
 
 limma::plotMDS(luad_matrix, labels=NULL, pch=1,
                col = c(&quot;blue&quot;, 
-                       &quot;purple&quot;, &quot;green&quot;)[factor(sample_type_df$`Cell Type`)])
-title(&quot;Figure 1: MDS plot of different sample types of lung cancer&quot;)
+                       &quot;purple&quot;, &quot;green&quot;)[factor(sample_type_df$`Cell Type`)])</code></pre>
+<pre class="r"><code>title(&quot;Figure 1: MDS plot of different sample types of lung cancer&quot;)
 legend(&quot;topleft&quot;,
        legend=levels(factor(sample_type_df$`Cell Type`)),
        pch=c(1), col=c(&quot;blue&quot;, &quot;purple&quot;, &quot;green&quot;),
@@ -1737,8 +1737,8 @@ edgeR::maPlot(logAbundance=qlf_MDO_hits$table$logCPM,
               xlab=&quot;log(counts per million)&quot;,
               ylab=&quot;log(fold-change)&quot;,
               main=&quot;Figure 2: MA Plot of significantly differentially 
-              expressed genes (PValue &lt; 0.05) for MDO vs Tumor&quot;)
-legend(&quot;topright&quot;, title=&quot;Significance&quot;,
+              expressed genes (PValue &lt; 0.05) for MDO vs Tumor&quot;)</code></pre>
+<pre class="r"><code>legend(&quot;topright&quot;, title=&quot;Significance&quot;,
        legend=c(&quot;not significant&quot;,
                 &quot;significant (PValue &lt; 0.05)&quot;),
        col=c(&quot;black&quot;, &quot;red&quot;), pch=1, cex=0.8)</code></pre>
@@ -1763,8 +1763,8 @@ edgeR::maPlot(logAbundance=qlf_PDO_hits$table$logCPM,
               xlab=&quot;log(counts per million)&quot;,
               ylab=&quot;log(fold-change)&quot;,
               main=&quot;Figure 3: MA Plot of significantly differentially 
-              expressed genes (PValue &lt; 0.05) for PDO vs Tumor&quot;)
-legend(&quot;topright&quot;, title=&quot;Significance&quot;,
+              expressed genes (PValue &lt; 0.05) for PDO vs Tumor&quot;)</code></pre>
+<pre class="r"><code>legend(&quot;topright&quot;, title=&quot;Significance&quot;,
        legend=c(&quot;not significant&quot;,
                 &quot;significant (PValue &lt; 0.05)&quot;),
        col=c(&quot;black&quot;, &quot;red&quot;), pch=1, cex=0.8)</code></pre>
@@ -1784,9 +1784,8 @@ plot(qlf_MDO_hits$table$logFC, -log10(qlf_MDO_hits$table$PValue),
      Expressed Genes MDO vs Tumor&quot;,
      xlab=&quot;Log(fold change)&quot;,
      ylab=&quot;-log10(p-value)&quot;,
-     pch=20, col=&quot;grey&quot;)  # Start with all points in grey
-
-# Highlighting significantly differentially expressed genes by p-value
+     pch=20, col=&quot;grey&quot;)  # Start with all points in grey</code></pre>
+<pre class="r"><code># Highlighting significantly differentially expressed genes by p-value
 points(qlf_MDO_hits$table$logFC[which(qlf_MDO_hits$table$PValue &lt; 0.05)],
        -log10(qlf_MDO_hits$table$PValue)[which(qlf_MDO_hits$table$PValue &lt; 0.05)],
        col=&quot;blue&quot;, pch=20)
@@ -1808,9 +1807,8 @@ legend(&quot;topright&quot;, title=&quot;Significance&quot;,
      Expressed Genes PDO vs Tumor&quot;,
      xlab=&quot;Log(fold change)&quot;,
      ylab=&quot;-log10(p-value)&quot;,
-     pch=20, col=&quot;grey&quot;)  # Start with all points in grey
-
-# Highlighting significantly differentially expressed genes by p-value
+     pch=20, col=&quot;grey&quot;)  # Start with all points in grey</code></pre>
+<pre class="r"><code># Highlighting significantly differentially expressed genes by p-value
 points(qlf_PDO_hits$table$logFC[which(qlf_PDO_hits$table$PValue &lt; 0.05)],
        -log10(qlf_PDO_hits$table$PValue)[which(qlf_PDO_hits$table$PValue &lt; 0.05)],
        col=&quot;blue&quot;, pch=20)
